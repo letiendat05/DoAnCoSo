@@ -26,16 +26,16 @@ import jakarta.servlet.http.HttpServletRequest;
 @Service
 public class VNPAYService implements IVNPAYService {
 
-    @Value("${trinhlam.vnpay.tmn-code}")
+    @Value("${ledat.vnpay.tmn-code}")
     private String vnp_TmnCode;
 
-    @Value("${trinhlam.vnpay.hash-secret}")
+    @Value("${ledat.vnpay.hash-secret}")
     private String secretKey;
 
-    @Value("${trinhlam.vnpay.vnp-return-url}")
+    @Value("${ledat.vnpay.vnp-return-url}")
     private String vnp_ReturnUrl;
 
-    @Value("${trinhlam.vnpay.vnp-url}")
+    @Value("${ledat.vnpay.vnp-url}")
     private String vnp_PayUrl;
 
     

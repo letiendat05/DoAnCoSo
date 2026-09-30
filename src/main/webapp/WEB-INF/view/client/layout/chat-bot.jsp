@@ -1,12 +1,12 @@
-<%@page contentType="text/html" pageEncoding="UTF-8" %> <%@ taglib prefix="c"
-uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chat-bot AI</title>
+    <title>Chat-bot AI Food Store</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -27,23 +27,28 @@ uri="http://java.sun.com/jsp/jstl/core" %>
         align-items: center;
         cursor: pointer;
         color: white;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 15px rgba(0, 120, 255, 0.4);
         z-index: 1000;
+        transition: transform 0.2s ease;
+      }
+
+      .chat-button:hover {
+        transform: scale(1.08);
       }
 
       .chat-icon {
-        font-size: 24px;
+        font-size: 26px;
       }
 
       .chat-container {
         position: fixed;
         bottom: 20px;
         right: 20px;
-        width: 350px;
-        height: 500px;
-        border-radius: 15px;
+        width: 380px;
+        height: 550px;
+        border-radius: 16px;
         background-color: white;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
         display: flex;
         flex-direction: column;
         overflow: hidden;
@@ -55,28 +60,32 @@ uri="http://java.sun.com/jsp/jstl/core" %>
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 15px;
-        background-color: white;
-        border-bottom: 1px solid #eaeaea;
+        padding: 14px 16px;
+        background: linear-gradient(135deg, #0078ff, #0056b3);
+        color: white;
       }
 
       .chat-title {
         display: flex;
         align-items: center;
         font-weight: bold;
-        font-size: 18px;
+        font-size: 16px;
       }
 
       .chat-title img {
-        width: 30px;
-        height: 30px;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
         margin-right: 10px;
+        background: white;
+        padding: 2px;
       }
 
       .close-chat {
         cursor: pointer;
         font-size: 24px;
-        color: #333;
+        color: white;
+        line-height: 1;
       }
 
       .chat-box {
@@ -84,92 +93,158 @@ uri="http://java.sun.com/jsp/jstl/core" %>
         overflow-x: hidden;
         overflow-y: auto;
         padding: 15px;
-        background-color: #f5f5f5;
+        background-color: #f7f9fa;
       }
 
       .message {
         margin-bottom: 15px;
-        max-width: 80%;
-        padding: 10px 15px;
-        border-radius: 18px;
+        max-width: 82%;
+        padding: 10px 14px;
+        border-radius: 16px;
         position: relative;
         clear: both;
-        line-height: 1.4;
+        line-height: 1.5;
+        font-size: 13.5px;
+        word-break: break-word;
       }
 
       .user-message {
-    font-weight: bold;
-    background-color: #F1F302;
-    float: right;
-    border-bottom-right-radius: 5px;
-}
+        font-weight: 500;
+        background-color: #e3f2fd;
+        color: #0b3d91;
+        border: 1px solid #bbdefb;
+        float: right;
+        border-bottom-right-radius: 4px;
+        white-space: pre-wrap;
+      }
 
       .bot-message {
         background-color: #0078ff;
         color: white;
         float: left;
-        border-bottom-left-radius: 5px;
+        border-bottom-left-radius: 4px;
+        white-space: pre-wrap;
+        box-shadow: 0 2px 6px rgba(0, 120, 255, 0.2);
+      }
+
+      .bot-message b, .bot-message strong {
+        color: #fff9a6;
       }
 
       .user-avatar {
-        width: 30px;
-        height: 30px;
+        width: 28px;
+        height: 28px;
         border-radius: 50%;
         position: absolute;
-        right: -40px;
+        right: -36px;
         bottom: 0;
+        background-size: cover;
       }
 
       .bot-avatar {
-    width: 38px;
-    height: 37px;
-    border-radius: 50%;
-    background-color: #0078ff;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    left: -57px;
-    bottom: 0;
-}
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: #0056b3;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        left: -42px;
+        bottom: 0;
+        font-size: 12px;
+        font-weight: bold;
+      }
 
-.answered-by {
-    padding-bottom: 14px;
-    text-align: center;
-    font-size: 12px;
-    color: #666;
-    margin-top: 5px;
-    clear: both;
-    padding-top: 0px;
-}
+      .answered-by {
+        padding-bottom: 12px;
+        text-align: center;
+        font-size: 11px;
+        color: #888;
+        margin-top: 4px;
+        clear: both;
+      }
+
+      .chat-quick-suggestions {
+        display: flex;
+        gap: 6px;
+        padding: 8px 12px;
+        overflow-x: auto;
+        white-space: nowrap;
+        background-color: #ffffff;
+        border-top: 1px solid #eee;
+        scrollbar-width: thin;
+      }
+
+      .chat-quick-suggestions::-webkit-scrollbar {
+        height: 4px;
+      }
+
+      .chat-quick-suggestions::-webkit-scrollbar-thumb {
+        background: #ddd;
+        border-radius: 4px;
+      }
+
+      .suggestion-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 11px;
+        background: #f0f7ff;
+        color: #0066cc;
+        border: 1px solid #cce3ff;
+        border-radius: 14px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+      }
+
+      .suggestion-chip:hover {
+        background: #0078ff;
+        color: #ffffff;
+        border-color: #0078ff;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba(0, 120, 255, 0.25);
+      }
 
       .chat-input-container {
         display: flex;
         align-items: center;
-        padding: 10px 15px;
+        padding: 10px 12px;
         background-color: white;
         border-top: 1px solid #eaeaea;
       }
 
       .chat-input {
         flex: 1;
-        padding: 10px 15px;
+        padding: 9px 14px;
         border: 1px solid #ddd;
         border-radius: 20px;
         outline: none;
-        font-size: 14px;
+        font-size: 13.5px;
+      }
+
+      .chat-input:focus {
+        border-color: #0078ff;
       }
 
       .chat-send {
-        margin-left: 10px;
-        padding: 10px 20px;
+        margin-left: 8px;
+        padding: 9px 16px;
         background-color: #0078ff;
         color: white;
         border: none;
-        border-radius: 5px;
+        border-radius: 20px;
         cursor: pointer;
-        font-size: 14px;
+        font-size: 13.5px;
+        font-weight: 500;
+        transition: background-color 0.2s;
+      }
+
+      .chat-send:hover {
+        background-color: #0056b3;
       }
 
       .chat-collapsed {
@@ -232,13 +307,22 @@ uri="http://java.sun.com/jsp/jstl/core" %>
             src="https://img.freepik.com/free-vector/chatbot-chat-message-vectorart_78370-4104.jpg"
             alt="AI Icon"
           />
-          AI ChatBot
+          Food Store AI Assistant
         </div>
         <div class="close-chat" onclick="toggleChatView('button')">&times;</div>
       </div>
 
       <div class="chat-box" id="chatBox">
-        <!-- Phần tin nhắn sẽ được thêm động vào đây -->
+        <!-- Messages -->
+      </div>
+
+      <div class="chat-quick-suggestions" id="quickSuggestions">
+        <button type="button" class="suggestion-chip" onclick="askSuggestion('Gợi ý thực đơn giảm cân với thực phẩm của quán')">🥗 Thực đơn giảm cân</button>
+        <button type="button" class="suggestion-chip" onclick="askSuggestion('Gợi ý món tăng cơ giàu đạm cho gymer')">💪 Món tăng cơ gymer</button>
+        <button type="button" class="suggestion-chip" onclick="askSuggestion('Hôm nay ăn món gì ngon bổ?')">🍲 Hôm nay ăn gì?</button>
+        <button type="button" class="suggestion-chip" onclick="askSuggestion('Quán có những loại trái cây tươi ngon nào?')">🍎 Trái cây tươi</button>
+        <button type="button" class="suggestion-chip" onclick="askSuggestion('Gợi ý thực phẩm nấu đồ ăn dặm cho bé')">👶 Đồ ăn dặm cho bé</button>
+        <button type="button" class="suggestion-chip" onclick="askSuggestion('Gợi ý món ăn Eat Clean healthy')">🥑 Eat Clean</button>
       </div>
 
       <div class="chat-input-container">
@@ -246,14 +330,13 @@ uri="http://java.sun.com/jsp/jstl/core" %>
           type="text"
           class="chat-input"
           id="userInput"
-          placeholder="Nhập câu hỏi..."
+          placeholder="Nhập câu hỏi hoặc chọn gợi ý..."
           onkeypress="handleKeyPress(event)"
         />
         <button class="chat-send" onclick="sendMessage()">Gửi</button>
       </div>
     </div>
 
-    <!-- trò chuyện thu gọn chế độ xem ( thanh lướt ) -->
     <div class="chat-collapsed" id="chatCollapsed">
       <div class="chat-collapsed-header">
         Chat-<br />bot AI
@@ -279,18 +362,15 @@ uri="http://java.sun.com/jsp/jstl/core" %>
     </div>
 
     <script>
-      // chuyển đổi giữa các chế độ
       function toggleChatView(view) {
         const chatButton = document.getElementById("chatButton");
         const chatContainer = document.getElementById("chatContainer");
         const chatCollapsed = document.getElementById("chatCollapsed");
 
-        // ấn các phần tử
         chatButton.style.display = "none";
         chatContainer.style.display = "none";
         chatCollapsed.style.display = "none";
 
-        // hiển thị chế độ xem được yêu cầu
         if (view === "button") {
           chatButton.style.display = "flex";
         } else if (view === "expanded") {
@@ -300,38 +380,43 @@ uri="http://java.sun.com/jsp/jstl/core" %>
         }
       }
 
-      // mở cửa sổ trò chuyện khi nhấn vào nút
       function openChat() {
         toggleChatView("expanded");
-        // thêm tin nhắn chào mừng nếu cuộc trò chuyện đang trống
-        if (document.getElementById("chatBox").innerHTML === "") {
-          addBotMessage("Chào bạn! Tôi có thể giúp gì cho bạn hôm nay?");
+        if (document.getElementById("chatBox").innerHTML.trim() === "") {
+          addBotMessage("👋 **Xin chào bạn!** Tôi là trợ lý AI của **Food Store** 🥗.\n\nTôi có thể giúp bạn:\n• Gợi ý món ăn ngon, bổ dưỡng mỗi ngày\n• Tư vấn thực đơn giảm cân, tăng cơ, Eat Clean\n• Giới thiệu các nguyên liệu tươi sạch đang có sẵn tại cửa hàng kèm giá bán\n\nBạn có thể nhấn vào các **gợi ý nhanh bên dưới** hoặc nhập câu hỏi nhé!");
         }
       }
 
-      // thêm tin nhắn của người dùng vào cuộc trò chuyện
-        function addUserMessage(message) {
-          const chatBox = document.getElementById("chatBox");
-          const messageDiv = document.createElement("div");
-          messageDiv.className = "message user-message";
-          messageDiv.innerHTML = message;
+      function formatBotResponse(text) {
+        if (!text) return "";
+        let formatted = text
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+        formatted = formatted.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
+        return formatted;
+      }
 
-          // Optional: thêm avatar người dùng
-          const avatar = document.createElement("div");
-          avatar.className = "user-avatar";
-          avatar.style.backgroundImage = "url('https://cdn-icons-png.flaticon.com/512/6596/6596121.png')";
-          messageDiv.appendChild(avatar);
+      function addUserMessage(message) {
+        const chatBox = document.getElementById("chatBox");
+        const messageDiv = document.createElement("div");
+        messageDiv.className = "message user-message";
+        messageDiv.textContent = message;
 
-          chatBox.appendChild(messageDiv);
-          chatBox.scrollTop = chatBox.scrollHeight;
-        }
+        const avatar = document.createElement("div");
+        avatar.className = "user-avatar";
+        avatar.style.backgroundImage = "url('https://cdn-icons-png.flaticon.com/512/6596/6596121.png')";
+        messageDiv.appendChild(avatar);
 
-      // thêm tin nhắn bot vào cuộc trò chuyện
+        chatBox.appendChild(messageDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
       function addBotMessage(message) {
         const chatBox = document.getElementById("chatBox");
         const messageDiv = document.createElement("div");
         messageDiv.className = "message bot-message";
-        messageDiv.innerHTML = message;
+        messageDiv.innerHTML = formatBotResponse(message);
 
         const avatar = document.createElement("div");
         avatar.className = "bot-avatar";
@@ -340,38 +425,37 @@ uri="http://java.sun.com/jsp/jstl/core" %>
 
         chatBox.appendChild(messageDiv);
 
-        // thêm đoạn text: trả lời bởi FoodStore-AI
         const answeredBy = document.createElement("div");
         answeredBy.className = "answered-by";
-        answeredBy.innerHTML = "Answered by FoodStore-AI";
+        answeredBy.innerHTML = "FoodStore AI Assistant";
         chatBox.appendChild(answeredBy);
 
         chatBox.scrollTop = chatBox.scrollHeight;
       }
 
-      // xử lý và call API với input người dùng nhập vào
+      function askSuggestion(text) {
+        document.getElementById("userInput").value = text;
+        sendMessage();
+      }
+
       function sendMessage() {
         const userInput = document.getElementById("userInput");
         const message = userInput.value.trim();
-        const messageCallAPI =
-          "Chỉ trả lời các câu hỏi liên quan đến thực phẩm, thức ăn, chế độ ăn. Viết thành đoạn văn và loại bỏ tất cả ký tự đặc biệt khỏi câu trả lời." +message;
         if (message === "") return;
 
         addUserMessage(message);
         userInput.value = "";
 
-        // hiển thị hiệu ứng đang nhập
         const typingIndicator = document.createElement("div");
         typingIndicator.className = "message bot-message";
         typingIndicator.id = "typingIndicator";
-        typingIndicator.innerHTML = "Đang nhập...";
+        typingIndicator.innerHTML = "Đang soạn gợi ý món cho bạn...";
         document.getElementById("chatBox").appendChild(typingIndicator);
+        document.getElementById("chatBox").scrollTop = document.getElementById("chatBox").scrollHeight;
 
-        // gọi API của gemini để lấy kết quả trả về
-        fetchGeminiResponse(messageCallAPI);
+        fetchGeminiResponse(message);
       }
 
-      // gửi tin nhắn từ chế độ xem trò chuyện đã thu gọn
       function sendCollapsedMessage() {
         const collapsedInput = document.getElementById("collapsedInput");
         const message = collapsedInput.value.trim();
@@ -381,19 +465,16 @@ uri="http://java.sun.com/jsp/jstl/core" %>
         collapsedInput.value = "";
         toggleChatView("expanded");
 
-        // thêm tin nhắn rồi gửi
         document.getElementById("userInput").value = message;
         sendMessage();
       }
 
-      // xử lý nếu người dùng bấm enter thay vì gửi
       function handleKeyPress(event) {
         if (event.key === "Enter") {
           sendMessage();
         }
       }
 
-      // lấy Data từ API của gemini
       async function fetchGeminiResponse(userText) {
         try {
           const requestBody = {
@@ -406,7 +487,6 @@ uri="http://java.sun.com/jsp/jstl/core" %>
             body: JSON.stringify(requestBody),
           });
 
-          // xóa thông báo đang nhập
           const typingIndicator = document.getElementById("typingIndicator");
           if (typingIndicator) {
             typingIndicator.remove();
@@ -417,17 +497,15 @@ uri="http://java.sun.com/jsp/jstl/core" %>
           const data = await response.text();
           addBotMessage(data);
         } catch (error) {
-          // xóa thông báo đang nhập
           const typingIndicator = document.getElementById("typingIndicator");
           if (typingIndicator) {
             typingIndicator.remove();
           }
 
-          addBotMessage("Lỗi: " + error.message);
+          addBotMessage("Lỗi kết nối: " + error.message);
         }
       }
 
-      // khởi tạo trò chuyện bằng chế độ xem nút
       document.addEventListener("DOMContentLoaded", function () {
         toggleChatView("button");
       });

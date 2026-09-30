@@ -49,8 +49,8 @@ public class SecurityConfiguration {
         }
 
         @Bean
-        AuthenticationSuccessHandler customSuccessHandler() {
-                return new CustomSuccessHandler();
+        AuthenticationSuccessHandler customSuccessHandler(UserService userService) {
+                return new CustomSuccessHandler(userService);
         }
 
         @Bean
@@ -62,7 +62,8 @@ public class SecurityConfiguration {
         }
 
         @Bean
-        SecurityFilterChain filterChain(HttpSecurity http, UserService userService) throws Exception {
+        SecurityFilterChain filterChain(HttpSecurity http, UserService userService,
+                        AuthenticationSuccessHandler customSuccessHandler) throws Exception {
                 http
                 .csrf(csrf -> csrf
                 // Cho phép các request tới Gemini API mà không cần CSRF token
@@ -77,13 +78,13 @@ public class SecurityConfiguration {
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2.loginPage("/login")
-                .successHandler(customSuccessHandler())
+                .successHandler(customSuccessHandler)
                 .failureHandler(customFailureHandler)
                 .userInfoEndpoint(user -> user.userService(new CustomOAuth2UserService(userService))))
                 .sessionManagement((sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.ALWAYS).invalidSessionUrl("/logout?expired").maximumSessions(1).maxSessionsPreventsLogin(false))
                 .logout(logout -> logout.deleteCookies("JSESSIONID").invalidateHttpSession(true))
                 .rememberMe(r -> r.rememberMeServices(rememberMeServices()))
-                .formLogin(formLogin -> formLogin.loginPage("/login").failureUrl("/login?error").successHandler(customSuccessHandler()).permitAll()).exceptionHandling(ex -> ex.accessDeniedPage("/access-deny"));
+                .formLogin(formLogin -> formLogin.loginPage("/login").failureUrl("/login?error").successHandler(customSuccessHandler).permitAll()).exceptionHandling(ex -> ex.accessDeniedPage("/access-deny"));
                 return http.build();
         }
 

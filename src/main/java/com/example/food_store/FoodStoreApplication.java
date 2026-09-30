@@ -4,6 +4,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.food_store.domain.Role;
@@ -18,6 +19,7 @@ public class FoodStoreApplication {
 	}
 
 	@Bean
+    @Order(1)
     CommandLineRunner initDatabase(RoleRepository roleRepository) {
         return args -> {
             if (roleRepository.count() == 0) {
@@ -38,18 +40,19 @@ public class FoodStoreApplication {
     }
 
     @Bean
+	@Order(2)
     CommandLineRunner initDatabaseUser(RoleRepository roleRepository,UserRepository userRepository, PasswordEncoder passwordEncoder) {    
     return args -> {
         if (userRepository.count() == 0) {
             User adminUser = new User();
-            adminUser.setEmail("lam.trinhquang@vti.com");
+            adminUser.setEmail("letiendat@vti.com");
             adminUser.setPassword(passwordEncoder.encode("123456"));
-            adminUser.setFullName("TrinhQuangLam");
-            adminUser.setRole(roleRepository.findById(1L).get()); // ADMIN role
+            adminUser.setFullName("LeTienDat");
+            adminUser.setRole(roleRepository.findByName("ADMIN"));
             adminUser.setProvider("LOCAL");
             adminUser.setAddress("HaNoi");
             adminUser.setAvatar("");
-            adminUser.setPhone("0971624914");
+            adminUser.setPhone("0343866075");
             
             userRepository.save(adminUser);
             

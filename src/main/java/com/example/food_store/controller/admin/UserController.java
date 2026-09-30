@@ -97,25 +97,25 @@ public class UserController extends BaseController {
     }
 
     @PostMapping(value = "/admin/user/create")
-    public String createUser(Model model, @ModelAttribute("newUser") @Valid User trinhlam, BindingResult newBindingResult, @RequestParam("avatarFile") MultipartFile file) {
+    public String createUser(Model model, @ModelAttribute("newUser") @Valid User ledat, BindingResult newBindingResult, @RequestParam("avatarFile") MultipartFile file) {
         log.info("Request to /admin/user/create");
         List<FieldError> errors = newBindingResult.getFieldErrors();
         for (FieldError error : errors) {
             System.out.println(error.getField() + " - " + error.getDefaultMessage());
         }
 
-        if (newBindingResult.hasErrors() || this.userService.checkEmailExist(trinhlam.getEmail())) {
-            if (this.userService.checkEmailExist(trinhlam.getEmail()))
+        if (newBindingResult.hasErrors() || this.userService.checkEmailExist(ledat.getEmail())) {
+            if (this.userService.checkEmailExist(ledat.getEmail()))
                 model.addAttribute("errorEmail", "Email đã tồn tại.");
             return "admin/user/create";
         }
 
         String avatar = this.uploadService.handleSaveUploadFile(file, "avatar");
-        String hashPassword = this.passwordEncoder.encode(trinhlam.getPassword());
-        trinhlam.setAvatar(avatar);
-        trinhlam.setPassword(hashPassword);
-        trinhlam.setRole(this.userService.getRoleByName(trinhlam.getRole().getName()));
-        this.userService.handleSaveUser(trinhlam);
+        String hashPassword = this.passwordEncoder.encode(ledat.getPassword());
+        ledat.setAvatar(avatar);
+        ledat.setPassword(hashPassword);
+        ledat.setRole(this.userService.getRoleByName(ledat.getRole().getName()));
+        this.userService.handleSaveUser(ledat);
         return "redirect:/admin/user";
     }
 
@@ -140,13 +140,13 @@ public class UserController extends BaseController {
     }
 
     @PostMapping("/admin/user/update")
-    public String postUpdateUser(Model model, @ModelAttribute("newUser") User trinhlam) {
+    public String postUpdateUser(Model model, @ModelAttribute("newUser") User ledat) {
         log.info("Request to /admin/user/update");
-        User currentUser = this.userService.getUserById(trinhlam.getId());
+        User currentUser = this.userService.getUserById(ledat.getId());
         if (currentUser != null) {
-            currentUser.setAddress(trinhlam.getAddress());
-            currentUser.setFullName(trinhlam.getFullName());
-            currentUser.setPhone(trinhlam.getPhone());
+            currentUser.setAddress(ledat.getAddress());
+            currentUser.setFullName(ledat.getFullName());
+            currentUser.setPhone(ledat.getPhone());
             this.userService.handleSaveUser(currentUser);
         }
         return "redirect:/admin/user";
@@ -154,9 +154,9 @@ public class UserController extends BaseController {
 
 
     @PostMapping("/admin/user/delete")
-    public String postDeleteUser(Model model, @ModelAttribute("newUser") User trinhlam) {
+    public String postDeleteUser(Model model, @ModelAttribute("newUser") User ledat) {
         log.info("Request to /admin/user/delete");
-        this.userService.deleteUserById(trinhlam.getId());
+        this.userService.deleteUserById(ledat.getId());
         return "redirect:/admin/user";
     }
 

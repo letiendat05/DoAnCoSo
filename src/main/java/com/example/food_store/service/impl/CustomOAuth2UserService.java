@@ -45,7 +45,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService implements
                         registrationeId.equalsIgnoreCase("github") ? "default-github.png" : "default-google.png");
                 oldUser.setFullName(fullName);
                 oldUser.setProvider(registrationeId.equalsIgnoreCase("github") ? OAuth2ProviderConstant.GITHUB : OAuth2ProviderConstant.GOOGLE);
-                oldUser.setPassword("trinhlam");
+                oldUser.setPassword("ledat");
                 oldUser.setRole(userRole);
                 this.userService.saveUser(oldUser);
             } else if (!user.getProvider().equalsIgnoreCase(registrationeId)) {
