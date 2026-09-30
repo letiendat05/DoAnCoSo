@@ -200,4 +200,4 @@ Chatbot tự động gợi ý món dựa trên 32 mặt hàng thực phẩm tư�
 
 ## 📞 Hỗ trợ & Đóng góp
 - **Nhóm phát triển:** Food Store Development Team
-- **Liên hệ hỗ trợ:** `letiendat@vti.com` / `trinhquanglam2k4@gmail.com`
+- **Liên hệ hỗ trợ:** `tdglobal8386@gmail.com`
