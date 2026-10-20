@@ -4,33 +4,42 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.example.food_store.domain.Order;
+import com.example.food_store.domain.OrderDetail;
 import com.example.food_store.domain.Product;
 import com.example.food_store.domain.Role;
 import com.example.food_store.domain.User;
+import com.example.food_store.repository.OrderDetailRepository;
+import com.example.food_store.repository.OrderRepository;
 import com.example.food_store.repository.ProductRepository;
 import com.example.food_store.repository.RoleRepository;
 import com.example.food_store.repository.UserRepository;
 
 @Component
-@Order(3)
+@org.springframework.core.annotation.Order(3)
 public class DataInitializer implements CommandLineRunner {
 
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final OrderRepository orderRepository;
+    private final OrderDetailRepository orderDetailRepository;
     private final PasswordEncoder passwordEncoder;
 
     public DataInitializer(ProductRepository productRepository,
                            UserRepository userRepository,
                            RoleRepository roleRepository,
+                           OrderRepository orderRepository,
+                           OrderDetailRepository orderDetailRepository,
                            PasswordEncoder passwordEncoder) {
         this.productRepository = productRepository;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.orderRepository = orderRepository;
+        this.orderDetailRepository = orderDetailRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -38,6 +47,7 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         seedUsers();
         seedProducts();
+        seedOrders();
     }
 
     private void seedUsers() {
@@ -554,5 +564,91 @@ public class DataInitializer implements CommandLineRunner {
         p.setType(type);
         p.setCustomerTarget(customerTarget);
         return p;
+    }
+
+    private void seedOrders() {
+        if (orderRepository.count() > 0) {
+            return;
+        }
+
+        User user = userRepository.findByEmail("user@gmail.com");
+        List<Product> products = productRepository.findAll();
+        if (user == null || products.isEmpty()) {
+            return;
+        }
+
+        // Order 1: Hoàn thành, COD
+        createOrder(user, "Nguyễn Văn User", "Số 15 Cầu Giấy, Hà Nội", "0987654321",
+                "Hoàn thành", "COD", "Thanh toán thành công", "UNKNOWN",
+                List.of(new OrderItem(products.get(0), 2), new OrderItem(products.get(1), 1)));
+
+        // Order 2: Hoàn thành, VNPAY
+        if (products.size() > 5) {
+            createOrder(user, "Trần Mai Anh", "Times City, 458 Minh Khai, Hà Nội", "0912345678",
+                    "Hoàn thành", "VNPAY", "Thanh toán thành công", "VNPAY20261019001",
+                    List.of(new OrderItem(products.get(2), 2), new OrderItem(products.get(3), 1)));
+        }
+
+        // Order 3: Đang vận chuyển, COD
+        if (products.size() > 7) {
+            createOrder(user, "Lê Hoàng Long", "Keangnam Landmark, Nam Từ Liêm, Hà Nội", "0977889900",
+                    "Đang vận chuyển", "COD", "Thanh toán khi nhận hàng", "UNKNOWN",
+                    List.of(new OrderItem(products.get(4), 1), new OrderItem(products.get(5), 2)));
+        }
+
+        // Order 4: Đang vận chuyển, VNPAY
+        if (products.size() > 10) {
+            createOrder(user, "Nguyễn Văn User", "Số 15 Cầu Giấy, Hà Nội", "0987654321",
+                    "Đang vận chuyển", "VNPAY", "Thanh toán thành công", "VNPAY20261020002",
+                    List.of(new OrderItem(products.get(6), 3), new OrderItem(products.get(0), 1)));
+        }
+
+        // Order 5: Chưa xử lý, COD
+        if (products.size() > 12) {
+            createOrder(user, "Phạm Thu Hương", "68 Đội Cấn, Ba Đình, Hà Nội", "0905123456",
+                    "Chưa xử lý", "COD", "Chưa thanh toán", "UNKNOWN",
+                    List.of(new OrderItem(products.get(7), 2)));
+        }
+
+        System.out.println("Imported demo orders successfully!");
+    }
+
+    private static class OrderItem {
+        final Product product;
+        final long quantity;
+        OrderItem(Product product, long quantity) {
+            this.product = product;
+            this.quantity = quantity;
+        }
+    }
+
+    private void createOrder(User user, String receiverName, String receiverAddress, String receiverPhone,
+                             String status, String paymentMethod, String paymentStatus, String paymentRef,
+                             List<OrderItem> items) {
+        Order order = new Order();
+        order.setUser(user);
+        order.setReceiverName(receiverName);
+        order.setReceiverAddress(receiverAddress);
+        order.setReceiverPhone(receiverPhone);
+        order.setStatus(status);
+        order.setPaymentMethod(paymentMethod);
+        order.setPaymentStatus(paymentStatus);
+        order.setPaymentRef(paymentRef);
+
+        double total = 0;
+        for (OrderItem item : items) {
+            total += item.product.getPrice() * item.quantity;
+        }
+        order.setTotalPrice(total);
+        order = orderRepository.save(order);
+
+        for (OrderItem item : items) {
+            OrderDetail detail = new OrderDetail();
+            detail.setOrder(order);
+            detail.setProduct(item.product);
+            detail.setPrice(item.product.getPrice());
+            detail.setQuantity(item.quantity);
+            orderDetailRepository.save(detail);
+        }
     }
 }
