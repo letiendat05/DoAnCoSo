@@ -47,10 +47,10 @@ public class FoodStoreApplication {
             User adminUser = new User();
             adminUser.setEmail("letiendat@vti.com");
             adminUser.setPassword(passwordEncoder.encode("123456"));
-            adminUser.setFullName("LeTienDat");
+            adminUser.setFullName("Lê Tiến Đạt");
             adminUser.setRole(roleRepository.findByName("ADMIN"));
             adminUser.setProvider("LOCAL");
-            adminUser.setAddress("HaNoi");
+            adminUser.setAddress("Hà Nội");
             adminUser.setAvatar("");
             adminUser.setPhone("0343866075");
             

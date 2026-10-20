@@ -20,7 +20,7 @@ uri="http://www.springframework.org/tags/form" %>
           <div class="position-relative mx-auto">
             <input
               class="form-control border-0 w-100 py-3 px-4 rounded-pill"
-              type="number"
+              type="email"
               placeholder="Email của bạn"
             />
             <button
@@ -87,9 +87,9 @@ uri="http://www.springframework.org/tags/form" %>
       <div class="col-lg-4 col-md-6">
         <div class="footer-item">
           <h4 class="text-light mb-3">Thông tin liên hệ</h4>
-          <p>Địa chỉ: Km10, Đường Nguyễn Trãi, Q. Hà Đông, Hà Nội</p>
-          <p>Email: trinhquanglam2k4@gmail.com</p>
-          <p>Số điện thoại: 024 3756 2186</p>
+          <p>Địa chỉ: Hà Nội</p>
+          <p>Email: letiendat@vti.com</p>
+          <p>Số điện thoại: 0343866075</p>
           <p>Hình thức thanh toán</p>
           <img src="/client/img/payment.png" class="img-fluid" alt="" />
         </div>

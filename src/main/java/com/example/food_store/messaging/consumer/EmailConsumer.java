@@ -1,6 +1,5 @@
 package com.example.food_store.messaging.consumer;
 
-
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,7 +14,7 @@ public class EmailConsumer {
     @Autowired
     private SendEmailService sendEmail;
 
-    @RabbitListener(queues = AppConstant.QUEUE)
+    @RabbitListener(queues = AppConstant.QUEUE, autoStartup = "${RABBITMQ_AUTO_STARTUP:false}")
     public void receiveEmailMessage(EmailRequest emailRequest) {
         sendEmail.sendEmail(emailRequest.getToEmail(),
                             emailRequest.getSubject(),

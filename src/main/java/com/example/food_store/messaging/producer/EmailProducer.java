@@ -14,10 +14,14 @@ public class EmailProducer {
     private RabbitTemplate rabbitTemplate;
 
     public void sendEmailToQueue(EmailRequest emailRequest) {
-        rabbitTemplate.convertAndSend(
-            AppConstant.EXCHANGE,
-            AppConstant.ROUTING_KEY,
-            emailRequest
-        );
+        try {
+            rabbitTemplate.convertAndSend(
+                AppConstant.EXCHANGE,
+                AppConstant.ROUTING_KEY,
+                emailRequest
+            );
+        } catch (Exception e) {
+            System.err.println("RabbitMQ connection unavailable, skipped email queue: " + e.getMessage());
+        }
     }
 }
